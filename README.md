@@ -10,4 +10,4 @@ Prise en main d'outils de partage de code et de documents:
 - proto-formulaire : calculs carbones fictifs, fonctionnel
 - tests_APIS_ADEME_GES : découpe intéressant, pas fonctionnel
 - articles_maj : essai intégration fonctionnalité de mise à jour à travers des articles et chargement sur l'appli Streamlit
-- articles_maj_&_extraction : essai mise à jour et extraction articles
+- articles_maj_&_extraction : essais mise à jour et extraction articles
