@@ -7,6 +7,5 @@ Prise en main d'outils de partage de code et de documents:
 **Snowflake*** :
 - Streamlit : création d'application automatiquement à partir de code Python
 - à découvrir encore : partage de notebooks SQL + Python
-- proto-formulaire : 
-
-- 
+- proto-formulaire : calculs carbones fictifs, fonctionnel
+- tests_APIS_ADEME_GES : découpe intéressant, pas fonctionnel
