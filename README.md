@@ -24,3 +24,18 @@ Prise en main d'outils de partage de code et de documents :
 | `articles_maj`                   | Essai d’intégration de la fonctionnalité de mise à jour via des articles, chargement Streamlit | 🧪 En test     |
 | `articles_maj_&_extraction`      | Essais de mise à jour et extraction d’articles                                               | 🧪 En test     |
 
+### 2) [n8n](https://n8n.io/?ps_partner_key=MTUyMjAzNTI0YzU3&ps_xid=vrWVmUFBoGFkrI&gsxid=vrWVmUFBoGFkrI&gspk=MTUyMjAzNTI0YzU3&gad_source=1)
+Pour la création de workflows.
+
+
+### 3) [ElevenLabs](https://elevenlabs.io/app/agents/agents)
+Partienanire de l'Hacktogone permettant la création Agents IA (vocaux et intégrable avec n8n)
+
+### Fonctionnalité recommendation par articles
+Par scrapping du site ADEME: https://librairie.ademe.fr/changement-climatique/8764-the-french-climate-challenge-9791029726316.html
+
+> utilisation sitmap
+
+> gestion flux RSS
+
+> intéraction utilisateurs
