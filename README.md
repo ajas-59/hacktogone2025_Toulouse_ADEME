@@ -1,9 +1,8 @@
 # hacktogone2025_Toulouse_ADEME
-contribution [Hacktogone Toulouse 2025](https://github.com/thehacktogone) : projet calcul score carbone des entreprises par agents IA et système de recommendation
+notre contribution à [Hacktogone Toulouse 2025](https://github.com/thehacktogone) 08/11/2025 à 11/11/2025 Toulouse, Epitech
 
-
-https://github.com/fatoumo/hacktogone2025
-
+> Projet calcul score carbone des entreprises par agents IA et système de recommendation de l'équipe [placeholder](https://github.com/fatoumo/hacktogone2025) constitué de : [Sacha Simonian](https://www.linkedin.com/in/sacha-simonian-a46580153?utm_source=share_via&utm_content=profile&utm_medium=member_android
+) et [Fabien Moritz](https://www.linkedin.com/in/fabienmoritz?utm_source=share_via&utm_content=profile&utm_medium=member_android) et moi.
 
 ## Outils :
 
@@ -33,15 +32,15 @@ Pour la création de workflows.
 
 
 ### 3) [ElevenLabs](https://elevenlabs.io/app/agents/agents)
-Partienanire de l'Hacktogone permettant la création Agents IA (vocaux et intégrable avec n8n)
+Partenaire de l'Hacktogone permettant la création Agents IA (vocaux et intégrable avec n8n)
 
 
 ### 4) [ClickUp](https://clickup.com)
 Pour assignation des taches en équipe
 
 
-### Fonctionnalité recommendation par articles
-Par scrapping du site ADEME: https://librairie.ademe.fr/changement-climatique/8764-the-french-climate-challenge-9791029726316.html
+## Fonctionnalité recommendation par articles
+Par scrapping du site [ADEME](https://librairie.ademe.fr/changement-climatique/8764-the-french-climate-challenge-9791029726316.html)
 
 > utilisation sitmap
 
