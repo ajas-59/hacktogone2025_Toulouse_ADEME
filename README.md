@@ -31,6 +31,11 @@ Pour la création de workflows.
 ### 3) [ElevenLabs](https://elevenlabs.io/app/agents/agents)
 Partienanire de l'Hacktogone permettant la création Agents IA (vocaux et intégrable avec n8n)
 
+
+### 4) [ClickUp](https://clickup.com)
+Pour assignation des taches en équipe
+
+
 ### Fonctionnalité recommendation par articles
 Par scrapping du site ADEME: https://librairie.ademe.fr/changement-climatique/8764-the-french-climate-challenge-9791029726316.html
 
