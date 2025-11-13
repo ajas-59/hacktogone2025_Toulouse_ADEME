@@ -1,5 +1,5 @@
 # hacktogone2025_Toulouse_ADEME
-contribution Hacktogone Toulouse 2025 : projet calcul score carbone des entreprises par agents IA et système de recommendation
+contribution [Hacktogone Toulouse 2025](https://github.com/thehacktogone) : projet calcul score carbone des entreprises par agents IA et système de recommendation
 
 
 https://github.com/fatoumo/hacktogone2025
