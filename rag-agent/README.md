@@ -41,6 +41,8 @@ The assistant is deployable as a **public web chat** (via n8n) or embedded into 
 - Generate embeddings (OpenAI)
 - Store in Supabase `documents` table (with metadata + vector)
 
+
+
 ### 🟨 2. Chat Agent Workflow (on message)
 
 - User asks a question
