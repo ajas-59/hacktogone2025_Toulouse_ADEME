@@ -95,9 +95,14 @@ The assistant is deployable as a **public web chat** (via n8n) or embedded into 
    );
 
 
-   🎯 Goals
-This project serves as a live, tangible demonstration of:
-Applied RAG principles in no-code
-AI automation in real workflows
-My ability to ship fast, useful AI tools
-My interest in AI agentic architectures, LLM orchestration & document intelligence
+
+## 🎯 Goals
+This project serves as a live, tangible demonstration of :
+
+> Applied RAG principles in no-code
+
+> AI automation in real workflows
+
+> My ability to ship fast, useful AI tools
+
+> My interest in AI agentic architectures, LLM orchestration & document intelligence
