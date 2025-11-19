@@ -64,9 +64,9 @@ The assistant is deployable as a **public web chat** (via n8n) or embedded into 
 ## 📺 Demo (Framer site or n8n public chat)
 
 > 💬 Try the agent live:  
-> [https://framer-url.com](https://your-framer-url.com)  
+> 
 > or  
-> [https://n8n.cloud/chat/your-agent]()
+> 
 
 ---
 
