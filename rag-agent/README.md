@@ -115,10 +115,9 @@ This demonstrates how **n8n can orchestrate APIs, custom analysis, and AI models
 
 ## 🗺️ Architecture
 
+```
 User Input
-
 ↓
-
 Webhook Trigger
 ↓
 ImpactCO2 API (HTTP Request)
@@ -130,7 +129,7 @@ Formatter (JS)
 Anthropic Claude (LLM Chain)
 ↓
 Webhook Response
-
+```
 
 ---
 
@@ -138,13 +137,12 @@ Webhook Response
 
 ### **1. Webhook (Trigger)**  
 Receives user input via POST, typically including:
-
-```json
-{
-  "distance_km": 12,
-  "transport_mode": "bus_gnv"
-}
-```
+   ```json
+   {
+     "distance_km": 12,
+     "transport_mode": "bus_gnv"
+   }
+   ```
 
 ### **2. HTTP Request — ImpactCO2 API**
 Sends a GET request to:
@@ -159,7 +157,7 @@ Returns official emissions data:
   "unit": "kgCO2e",
   "label": "Bus (GNV)"
 }
-'''
+```
 
 ### **3. Local Analysis Engine (JS Node)**
 Performs domain-specific analysis such as:
@@ -167,50 +165,53 @@ carbon intensity classification
 comparison to reference values
 eco-score and interpretation
 Example resulting object:
-'''json
+
+```json
 {
   "carbonIntensity": 1.217,
   "rating": "Moderate",
   "comparison": "631% of average car emissions (worse)",
   "recommendation": "Consider alternatives like tram or carpooling."
 }
-'''
+```
 
 ### **4. Format Final Output (JS Node)**
 Prepares stable, clean input for the LLM:
-'''json
+```json
 {
   "mode": "Bus (GNV)",
   "distance": 12,
   "analysis": { ... }
 }
-'''
+```
 
 5. Basic LLM Chain — Anthropic Claude
 Generates a human-readable explanation including:
 impact interpretation
 comparison with other transport options
 practical eco-friendly advice
-Example output:
-Your 12 km trip by Bus (GNV) emits 1.217 kg CO₂e, which is moderately high for this distance. Consider using electric public transport or carpooling when available.
+
+**Example output:**
+*Your 12 km trip by Bus (GNV) emits 1.217 kg CO₂e, which is moderately high for this distance. Consider using electric public transport or carpooling when available.*
 
 
 6. Respond to Webhook
 Returns the final AI-crafted message to the user:
-'''json
+```json
 {
   "message": "Your 12 km trip by Bus (GNV) emits 1.217 kg CO₂e... [etc]"
 }
-'''
+```
 
 
 ## ✨ Features
+```
 ✔ Live CO₂ emissions data from ImpactCO2
 ✔ Local rule-based carbon intensity analysis
 ✔ AI-generated explanations (Claude)
 ✔ Fully automated webhook endpoint
 ✔ Easily integratable into chat apps, Framer prototypes, or mobile apps
-
+```
 
 ## 🎯 Goals
 This project serves as a live, tangible demonstration of :
