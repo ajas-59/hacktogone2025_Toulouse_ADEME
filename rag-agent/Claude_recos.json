@@ -1,0 +1,434 @@
+{
+  "name": "Claude_recos",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.aiContext }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are an environmental transportation advisor. Help users understand carbon emissions data and make eco-friendly travel choices. Be friendly, informative, and provide actionable recommendations"
+            },
+            {
+              "type": "HumanMessagePromptTemplate",
+              "message": "={{ $json.aiContext }}"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        1248,
+        -816
+      ],
+      "id": "80a35a84-0922-43c5-98a0-2a5a7ac7c080",
+      "name": "Basic LLM Chain1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Local Analysis Engine - Process ImpactCO2 API Data\n// This code should be placed in a \"Code\" node in n8n\n\n// Get the input data from the previous node\nconst inputData = $input.all();\n\n// Process each item from the HTTP Request\nconst processedItems = inputData.map(item => {\n  const data = item.json.data;\n  \n  // If data is an array, process each element\n  if (Array.isArray(data)) {\n    return data.map(entry => ({\n      // Original data\n      id: entry.id,\n      name: entry.name,\n      value: entry.value,\n      \n      // Analysis metrics\n      analysis: {\n        carbonIntensity: entry.value,\n        category: classifyTransport(entry.name),\n        rating: getRating(entry.value),\n        comparison: compareToAverage(entry.value),\n        recommendation: getRecommendation(entry.value, entry.name)\n      },\n      \n      // Metadata\n      metadata: {\n        processedAt: new Date().toISOString(),\n        source: 'ImpactCO2 API',\n        unit: 'kg CO2e per km'\n      }\n    }));\n  }\n  \n  // If data is a single object\n  return [{\n    id: data.id,\n    name: data.name,\n    value: data.value,\n    analysis: {\n      carbonIntensity: data.value,\n      category: classifyTransport(data.name),\n      rating: getRating(data.value),\n      comparison: compareToAverage(data.value),\n      recommendation: getRecommendation(data.value, data.name)\n    },\n    metadata: {\n      processedAt: new Date().toISOString(),\n      source: 'ImpactCO2 API',\n      unit: 'kg CO2e per km'\n    }\n  }];\n});\n\n// Helper Functions\n\nfunction classifyTransport(name) {\n  const lower = name.toLowerCase();\n  if (lower.includes('bus') || lower.includes('autocar')) return 'Public Transport - Bus';\n  if (lower.includes('train') || lower.includes('ter') || lower.includes('tgv')) return 'Public Transport - Rail';\n  if (lower.includes('métro') || lower.includes('metro') || lower.includes('tramway')) return 'Public Transport - Urban';\n  if (lower.includes('voiture') || lower.includes('car')) return 'Private Vehicle';\n  if (lower.includes('vélo') || lower.includes('bike') || lower.includes('trottinette')) return 'Active Mobility';\n  if (lower.includes('avion') || lower.includes('plane')) return 'Air Travel';\n  return 'Other';\n}\n\nfunction getRating(value) {\n  if (value < 0.1) return 'Excellent';\n  if (value < 0.5) return 'Very Good';\n  if (value < 1.0) return 'Good';\n  if (value < 1.5) return 'Moderate';\n  if (value < 2.0) return 'High';\n  return 'Very High';\n}\n\nfunction compareToAverage(value) {\n  // Average car emissions ~0.193 kg CO2e/km\n  const carAverage = 0.193;\n  const percentage = ((value / carAverage) * 100).toFixed(0);\n  \n  if (value < carAverage) {\n    return `${percentage}% of average car emissions (better)`;\n  } else {\n    return `${percentage}% of average car emissions (worse)`;\n  }\n}\n\nfunction getRecommendation(value, name) {\n  if (value < 0.1) {\n    return `${name} is an excellent low-carbon choice. Keep using this mode of transport!`;\n  } else if (value < 1.0) {\n    return `${name} is a good choice with moderate emissions. Consider this for longer distances.`;\n  } else if (value < 2.0) {\n    return `${name} has relatively high emissions. Consider alternatives like public transport or carpooling when possible.`;\n  } else {\n    return `${name} has very high carbon emissions. Try to limit use and explore lower-emission alternatives.`;\n  }\n}\n\n// Flatten the array and return\nreturn processedItems.flat().map(item => ({ json: item }));"
+      },
+      "id": "34bf0d28-c51c-4829-898c-86dff10b63bf",
+      "name": "Local Analysis Engine2",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        736,
+        -800
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\n// Create a comprehensive context for the AI\nconst transportData = items.map(item => item.json);\n\n// Sort by carbon intensity\ntransportData.sort((a, b) => a.value - b.value);\n\n// Build structured summary\nconst summary = {\n  totalOptions: transportData.length,\n  bestOption: transportData[0],\n  worstOption: transportData[transportData.length - 1],\n  averageEmissions: (transportData.reduce((sum, t) => sum + t.value, 0) / transportData.length).toFixed(3),\n  allTransportData: transportData\n};\n\n// Create AI-friendly context message\nconst contextMessage = `\nI have analyzed ${summary.totalOptions} transportation options from the ImpactCO2 API.\n\n🌱 BEST OPTION: ${summary.bestOption.name}\n- Carbon Intensity: ${summary.bestOption.value} kg CO2e/km\n- Rating: ${summary.bestOption.analysis.rating}\n- ${summary.bestOption.analysis.comparison}\n\n⚠️ HIGHEST EMISSIONS: ${summary.worstOption.name}\n- Carbon Intensity: ${summary.worstOption.value} kg CO2e/km\n- Rating: ${summary.worstOption.analysis.rating}\n\n📊 AVERAGE EMISSIONS: ${summary.averageEmissions} kg CO2e/km\n\nCOMPLETE TRANSPORTATION DATA:\n${transportData.map((t, i) => `\n${i + 1}. ${t.name}\n   - Emissions: ${t.value} kg CO2e/km\n   - Category: ${t.analysis.category}\n   - Rating: ${t.analysis.rating}\n   - ${t.analysis.comparison}\n   - Recommendation: ${t.analysis.recommendation}\n`).join('')}\n\n---\nThis data can help answer questions about:\n- Which transport mode is most eco-friendly\n- How different vehicles compare in carbon emissions\n- Recommendations for reducing your carbon footprint\n- Environmental impact of travel choices\n\nHow can I help you understand this transportation data?\n`;\n\nreturn [{\n  json: {\n    summary: summary,\n    aiContext: contextMessage,\n    transportData: transportData,\n    timestamp: new Date().toISOString()\n  }\n}];"
+      },
+      "id": "63df1a42-1c94-4772-af39-9880eedd55f2",
+      "name": "Format Final Output2",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        976,
+        -800
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://impactco2.fr/api/v1/transport",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "km",
+              "value": "10"
+            }
+          ]
+        },
+        "options": {
+          "response": {},
+          "timeout": 10000
+        }
+      },
+      "id": "db69007c-577e-4b95-88cd-bc38112ecb81",
+      "name": "HTTP Request (ImpactCO2)3",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        496,
+        -800
+      ],
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "DTXoeoBM448fRKUg",
+          "name": "Bearer Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get the AI response from the previous node\nconst aiResponse = $input.first();\n\n// Extract the AI's message based on which provider you're using\nlet message;\n\n// If you're using OpenAI:\nif (aiResponse.json.choices) {\n  message = aiResponse.json.choices[0].message.content;\n} \n// If you're using Claude (via HTTP Request):\nelse if (aiResponse.json.content) {\n  message = aiResponse.json.content[0].text;\n}\n// Fallback if structure is different:\nelse {\n  message = JSON.stringify(aiResponse.json);\n}\n\n// Format for chat display\nconst chatOutput = {\n  type: 'ai_response',\n  timestamp: new Date().toISOString(),\n  message: message,\n  transportDataAvailable: true,\n  suggestedActions: [\n    'Compare specific transport modes',\n    'Get personalized recommendations',\n    'Calculate trip emissions',\n    'Find eco-friendly alternatives'\n  ]\n};\n\nreturn [{ json: chatOutput }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1696,
+        -880
+      ],
+      "id": "b8efb3fb-c544-4a89-a4ef-85c34d2979d8",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "claude-sonnet-4-5-20250929",
+          "mode": "list",
+          "cachedResultName": "Claude Sonnet 4.5"
+        },
+        "options": {
+          "maxTokensToSample": 2000,
+          "temperature": 0.7
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        1184,
+        -608
+      ],
+      "id": "903a5bad-7016-4e8a-849f-f86196328632",
+      "name": "Anthropic Chat Model",
+      "credentials": {
+        "anthropicApi": {
+          "id": "4WvEDSpY3bXzefXB",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## v1 pas adapté à \"tous transports\" API\n**Double click** to edit me. [Guide](https://docs.n8n.io/workflows/sticky-notes/)",
+        "height": 528,
+        "width": 1520,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        144,
+        -944
+      ],
+      "typeVersion": 1,
+      "id": "dcd14908-c0c7-48cb-a10f-0efd146fb8a5",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.aiContext }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are an environmental transportation advisor. Help users understand carbon emissions data and make eco-friendly travel choices. Be friendly, informative, and provide actionable recommendations"
+            },
+            {
+              "type": "HumanMessagePromptTemplate",
+              "message": "={{ $json.aiContext }}"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        -96,
+        -1312
+      ],
+      "id": "486a26bb-8b0f-481c-9bc0-8692f4d77c60",
+      "name": "Basic LLM Chain2"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================\n// NODE 1: Local Analysis Engine (French)\n// ============================================\n\nconst inputData = $input.all();\n\n// Distance du trajet (changez cette valeur selon vos besoins)\nconst httpRequestData = $('HTTP_Request').first();\nconst tripDistanceKm = httpRequestData?.json?.km || \n                       httpRequestData?.params?.km || \n                       10; // Valeur par défaut si non trouvée\n\nconst processedItems = inputData.map(item => {\n  // Gérer différents formats de réponse API\n  let data = item.json.data || item.json;\n  \n  if (!data && Array.isArray(item.json)) {\n    data = item.json;\n  }\n  \n  if (!Array.isArray(data)) {\n    data = [data];\n  }\n  \n  return data.map(entry => {\n    const totalEmissions = entry.value;\n    const emissionsPerKm = totalEmissions / tripDistanceKm;\n    \n    return {\n      id: entry.id,\n      name: entry.name,\n      totalEmissions: totalEmissions,\n      emissionsPerKm: emissionsPerKm,\n      tripDistance: tripDistanceKm,\n      \n      analysis: {\n        carbonIntensity: emissionsPerKm,\n        totalCarbonFootprint: totalEmissions,\n        category: classifyTransport(entry.name),\n        rating: getRating(totalEmissions, tripDistanceKm),\n        absoluteRating: getAbsoluteRating(totalEmissions, tripDistanceKm),\n        comparison: compareToAverage(emissionsPerKm, totalEmissions, tripDistanceKm),\n        impactEquivalent: getImpactEquivalent(totalEmissions),\n        recommendation: getRecommendation(totalEmissions, entry.name, tripDistanceKm)\n      },\n      \n      metadata: {\n        processedAt: new Date().toISOString(),\n        source: 'API ImpactCO2',\n        unit: 'kg CO2e par km',\n        totalUnit: 'kg CO2e total',\n        distance: `${tripDistanceKm} km`\n      }\n    };\n  });\n});\n\n// Fonctions d'aide\nfunction classifyTransport(name) {\n  const lower = name.toLowerCase();\n  \n  if (lower.includes('bus') || lower.includes('autocar') || lower.includes('autobus')) {\n    return 'Transport Public - Bus';\n  }\n  \n  if (lower.includes('train') || lower.includes('ter') || lower.includes('tgv') || \n      lower.includes('intercités') || lower.includes('transilien')) {\n    return 'Transport Public - Train';\n  }\n  \n  if (lower.includes('métro') || lower.includes('metro') || lower.includes('tramway') || \n      lower.includes('tram')) {\n    return 'Transport Public - Urbain';\n  }\n  \n  if (lower.includes('voiture') || lower.includes('automobile') || lower.includes('suv') ||\n      lower.includes('citadine') || lower.includes('berline')) {\n    return 'Véhicule Privé';\n  }\n  \n  if (lower.includes('vélo') || lower.includes('velo') || lower.includes('marche') || \n      lower.includes('trottinette') || lower.includes('vae')) {\n    return 'Mobilité Active';\n  }\n  \n  if (lower.includes('avion') || lower.includes('vol')) {\n    return 'Transport Aérien';\n  }\n  \n  if (lower.includes('moto') || lower.includes('scooter')) {\n    return 'Deux-roues Motorisé';\n  }\n  \n  return 'Autre';\n}\n\nfunction getRating(totalEmissions, distance) {\n  const emissionsPerKm = totalEmissions / distance;\n  \n  if (emissionsPerKm < 0.01) return 'Excellent ⭐⭐⭐⭐⭐';\n  if (emissionsPerKm < 0.05) return 'Très Bon ⭐⭐⭐⭐';\n  if (emissionsPerKm < 0.1) return 'Bon ⭐⭐⭐';\n  if (emissionsPerKm < 0.2) return 'Moyen ⭐⭐';\n  if (emissionsPerKm < 0.5) return 'Élevé ⭐';\n  return 'Très Élevé ⚠️';\n}\n\nfunction getAbsoluteRating(totalEmissions, distance) {\n  if (totalEmissions < 0.5) {\n    return `Impact Minimal (${totalEmissions.toFixed(2)} kg CO2e pour ${distance} km)`;\n  }\n  if (totalEmissions < 2) {\n    return `Impact Faible (${totalEmissions.toFixed(2)} kg CO2e pour ${distance} km)`;\n  }\n  if (totalEmissions < 5) {\n    return `Impact Modéré (${totalEmissions.toFixed(2)} kg CO2e pour ${distance} km)`;\n  }\n  if (totalEmissions < 10) {\n    return `Impact Élevé (${totalEmissions.toFixed(2)} kg CO2e pour ${distance} km)`;\n  }\n  if (totalEmissions < 50) {\n    return `Impact Très Élevé (${totalEmissions.toFixed(2)} kg CO2e pour ${distance} km)`;\n  }\n  return `Impact Sévère (${totalEmissions.toFixed(2)} kg CO2e pour ${distance} km) ⚠️`;\n}\n\nfunction compareToAverage(emissionsPerKm, totalEmissions, tripDistance) {\n  const carAverage = 0.193;\n  const carTotalEmissions = carAverage * tripDistance;\n  const percentage = ((emissionsPerKm / carAverage) * 100).toFixed(0);\n  const difference = Math.abs(totalEmissions - carTotalEmissions).toFixed(2);\n  \n  if (emissionsPerKm < carAverage) {\n    return `${percentage}% des émissions d'une voiture - ÉCONOMISE ${difference} kg CO2e sur ce trajet de ${tripDistance}km ! 🌱`;\n  } else if (emissionsPerKm === carAverage) {\n    return `Équivalent aux émissions d'une voiture moyenne (${carTotalEmissions.toFixed(2)} kg CO2e pour ${tripDistance}km)`;\n  } else {\n    return `${percentage}% des émissions d'une voiture - COÛTE ${difference} kg CO2e de plus qu'une voiture pour ${tripDistance}km ⚠️`;\n  }\n}\n\nfunction getImpactEquivalent(totalEmissions) {\n  const treesNeeded = (totalEmissions / 21).toFixed(1);\n  const smartphoneCharges = (totalEmissions / 0.008).toFixed(0);\n  const meatMeals = (totalEmissions / 2.5).toFixed(1);\n  \n  if (totalEmissions < 0.5) {\n    return `Équivalent à ${smartphoneCharges} charges de smartphone`;\n  } else if (totalEmissions < 5) {\n    return `Équivalent à ${meatMeals} repas de bœuf ou ${treesNeeded} arbres nécessaires pendant un an pour compenser`;\n  } else if (totalEmissions < 20) {\n    return `Nécessiterait ${treesNeeded} arbres travaillant une année complète pour compenser ce trajet`;\n  } else {\n    return `Impact massif ! Il faudrait ${treesNeeded} arbres travaillant une année complète pour compenser. Envisagez des alternatives !`;\n  }\n}\n\nfunction getRecommendation(totalEmissions, name, distance) {\n  if (totalEmissions < 0.5) {\n    return `${name} est un excellent choix pour votre trajet de ${distance}km ! Émissions totales de seulement ${totalEmissions.toFixed(2)} kg CO2e.`;\n  } else if (totalEmissions < 2) {\n    return `${name} est un bon choix pour ${distance}km avec ${totalEmissions.toFixed(2)} kg CO2e d'émissions totales.`;\n  } else if (totalEmissions < 10) {\n    return `${name} produit ${totalEmissions.toFixed(2)} kg CO2e pour ${distance}km - envisagez le covoiturage ou les transports en commun pour réduire l'impact.`;\n  } else {\n    return `${name} génère ${totalEmissions.toFixed(2)} kg CO2e pour ${distance}km - c'est assez élevé ! Privilégiez fortement des alternatives comme le train ou le bus.`;\n  }\n}\n\nreturn processedItems.flat().map(item => ({ json: item }));"
+      },
+      "id": "dd00243b-4626-4b8e-aa12-3e3abdba0602",
+      "name": "Local Analysis Engine",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -608,
+        -1296
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================\n// NODE 2: Format Final Output (French)\n// ============================================\n// Préparer le contexte pour l'IA en français\n\nconst items = $input.all();\n\n// Créer un contexte complet pour l'IA\nconst transportData = items.map(item => item.json);\n\n// Trier par émissions TOTALES (pas par km)\ntransportData.sort((a, b) => a.totalEmissions - b.totalEmissions);\n\n// Construire un résumé structuré\nconst tripDistance = transportData[0].tripDistance;\nconst summary = {\n  tripDistance: tripDistance,\n  totalOptions: transportData.length,\n  bestOption: transportData[0],\n  worstOption: transportData[transportData.length - 1],\n  averageEmissionsPerKm: (transportData.reduce((sum, t) => sum + t.emissionsPerKm, 0) / transportData.length).toFixed(3),\n  averageTotalEmissions: (transportData.reduce((sum, t) => sum + t.totalEmissions, 0) / transportData.length).toFixed(2),\n  totalEmissionsSaved: (transportData[transportData.length - 1].totalEmissions - transportData[0].totalEmissions).toFixed(2),\n  allTransportData: transportData\n};\n\n// Créer un message contextuel convivial pour l'IA\nconst contextMessage = `\nJ'ai analysé ${summary.totalOptions} options de transport pour un trajet de ${tripDistance} km en utilisant les données de l'API ImpactCO2.\n\n🌱 MEILLEURE OPTION : ${summary.bestOption.name}\n- Émissions totales : ${summary.bestOption.totalEmissions.toFixed(2)} kg CO2e pour ${tripDistance} km\n- Par km : ${summary.bestOption.emissionsPerKm.toFixed(4)} kg CO2e/km\n- Note : ${summary.bestOption.analysis.rating}\n- Impact : ${summary.bestOption.analysis.absoluteRating}\n- ${summary.bestOption.analysis.comparison}\n- Équivalent : ${summary.bestOption.analysis.impactEquivalent}\n\n⚠️ OPTION LA PLUS POLLUANTE : ${summary.worstOption.name}\n- Émissions totales : ${summary.worstOption.totalEmissions.toFixed(2)} kg CO2e pour ${tripDistance} km\n- Par km : ${summary.worstOption.emissionsPerKm.toFixed(4)} kg CO2e/km\n- Note : ${summary.worstOption.analysis.rating}\n- Impact : ${summary.worstOption.analysis.absoluteRating}\n- ${summary.worstOption.analysis.comparison}\n\n💡 POINT CLÉ : En choisissant ${summary.bestOption.name} au lieu de ${summary.worstOption.name}, vous économisez ${summary.totalEmissionsSaved} kg CO2e sur ce trajet de ${tripDistance} km !\n\n📊 STATISTIQUES DU TRAJET :\n- Distance : ${tripDistance} km\n- Émissions moyennes par km : ${summary.averageEmissionsPerKm} kg CO2e/km\n- Émissions totales moyennes : ${summary.averageTotalEmissions} kg CO2e\n\n🚗 TOUTES LES OPTIONS DE TRANSPORT (classées par impact total) :\n\n${transportData.map((t, i) => `\n${i + 1}. ${t.name}\n   - Total pour le trajet : ${t.totalEmissions.toFixed(2)} kg CO2e (pour ${tripDistance} km)\n   - Par kilomètre : ${t.emissionsPerKm.toFixed(4)} kg CO2e/km\n   - Catégorie : ${t.analysis.category}\n   - Note : ${t.analysis.rating}\n   - ${t.analysis.comparison}\n   - Équivalent concret : ${t.analysis.impactEquivalent}\n   - Recommandation : ${t.analysis.recommendation}\n`).join('')}\n\n---\nCette analyse proportionnelle montre l'impact environnemental RÉEL de votre trajet de ${tripDistance} km.\nLe classement change selon la distance - ce qui est optimal pour les courts trajets peut ne pas l'être pour les longs !\n\nComment puis-je vous aider à prendre la décision de voyage la plus écologique ?\n`;\n\n// Créer également un résumé court pour des réponses rapides\nconst shortSummary = `\nPour un trajet de ${tripDistance} km :\n🌱 Meilleur choix : ${summary.bestOption.name} (${summary.bestOption.totalEmissions.toFixed(2)} kg CO2e)\n⚠️ À éviter : ${summary.worstOption.name} (${summary.worstOption.totalEmissions.toFixed(2)} kg CO2e)\n💰 Économie potentielle : ${summary.totalEmissionsSaved} kg CO2e\n`;\n\nreturn [{\n  json: {\n    summary: summary,\n    aiContext: contextMessage,\n    shortSummary: shortSummary,\n    transportData: transportData,\n    tripDistance: tripDistance,\n    timestamp: new Date().toISOString(),\n    language: 'fr'\n  }\n}];"
+      },
+      "id": "12ffde9d-c038-4dac-accc-8c9891fea43c",
+      "name": "Format Final Output",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -368,
+        -1296
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "claude-sonnet-4-5-20250929",
+          "mode": "list",
+          "cachedResultName": "Claude Sonnet 4.5"
+        },
+        "options": {
+          "maxTokensToSample": 2000,
+          "temperature": 0.7
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        -160,
+        -1104
+      ],
+      "id": "95da0d4c-19a3-409d-9c1b-0d2f699d948c",
+      "name": "Anthropic Chat Model1",
+      "credentials": {
+        "anthropicApi": {
+          "id": "4WvEDSpY3bXzefXB",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://impactco2.fr/api/v1/transport",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "km",
+              "value": "10"
+            }
+          ]
+        },
+        "options": {
+          "response": {},
+          "timeout": 10000
+        }
+      },
+      "id": "9ea75088-8ddd-4ea7-bed0-155be4f52e21",
+      "name": "HTTP_Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        -848,
+        -1296
+      ],
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "DTXoeoBM448fRKUg",
+          "name": "Bearer Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## v2 tous transports\n**Double click** to edit me. [Guide](https://docs.n8n.io/workflows/sticky-notes/)",
+        "height": 496,
+        "width": 1632
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1168,
+        -1456
+      ],
+      "typeVersion": 1,
+      "id": "1b2d19ad-7edf-4af2-a5b0-a345c1b84fc1",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "/ai-test",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -1088,
+        -1296
+      ],
+      "id": "d4590cff-9cc5-4369-88e5-fa19acb5c37a",
+      "name": "Webhook",
+      "webhookId": "5739664b-c982-40e0-96fd-d6b5f931b904"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{$json.result}}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        240,
+        -1232
+      ],
+      "id": "e0c97712-7633-4a85-8af1-45ea565a622e",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Local Analysis Engine2": {
+      "main": [
+        [
+          {
+            "node": "Format Final Output2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request (ImpactCO2)3": {
+      "main": [
+        [
+          {
+            "node": "Local Analysis Engine2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Final Output2": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Local Analysis Engine": {
+      "main": [
+        [
+          {
+            "node": "Format Final Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Final Output": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain2",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP_Request": {
+      "main": [
+        [
+          {
+            "node": "Local Analysis Engine",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "HTTP_Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain2": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "5d2ed009-8cd5-4d07-8724-4f98ec64f955",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1301eeb7a0566cc2b0eb979f068e726af4b08f654e642c23bb1fab347fdd7ad7"
+  },
+  "id": "yqJn745DeZMLuX0V",
+  "tags": []
+}
