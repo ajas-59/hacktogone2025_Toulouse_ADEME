@@ -1,10 +1,12 @@
-# 🤖 AI RAG Agent — Document-Aware Assistant with n8n + Supabase + OpenAI
+# 🤖 AI RAG Agents
+
+## Document-Aware Assistants on n8n using Supabase, OpenAI and Anthropic Claude
 
 ![n8n + Supabase + OpenAI](https://img.shields.io/badge/Stack-n8n%20%7C%20Supabase%20%7C%20OpenAI-blue)
 ![Status](https://img.shields.io/badge/Prototype-Ready-green)
 ![Made with No-Code](https://img.shields.io/badge/Made%20with-No%20Code-brightgreen)
 
-## 🧠 Project Description
+## 🧠 Part 1 - AI agent question/answering with Supabase RAG (ADEME documentation)
 
 This project is a **RAG-based intelligent assistant** (Retrieval-Augmented Generation) built with **no-code tools**.  
 It allows an AI agent to answer questions based on **your own documents**, such as PDFs or Google Docs.
@@ -63,14 +65,6 @@ The assistant is deployable as a **public web chat** (via n8n) or embedded into 
 
 ---
 
-## 📺 Demo (Framer site or n8n public chat)
-
-> 💬 Try the agent live:  
-> 
-> or  
-> 
-
----
 
 ## 📌 Use Case Examples
 
@@ -96,6 +90,126 @@ The assistant is deployable as a **public web chat** (via n8n) or embedded into 
      embedding vector(1536)
    );
 
+
+# 🚦 Part 2 — Transport Emissions AI Agent  
+### *ImpactCO2 + n8n + Anthropic Claude*
+
+![n8n Workflow](https://img.shields.io/badge/Workflow-n8n-yellow)
+![CO₂ API](https://img.shields.io/badge/Data-ImpactCO2-orange)
+![AI Model](https://img.shields.io/badge/Model-Anthropic%20Claude-blueviolet)
+
+## 🧭 Overview
+
+This workflow powers a **real-time AI assistant that analyzes transport-related CO₂ emissions**, using data from **ImpactCO2** and generating a friendly explanation through **Anthropic Claude**.
+
+It turns raw emission values into a clear, contextualized message for end users:
+
+- 🚗 Retrieves accurate carbon emissions for any transport mode  
+- 📊 Classifies the environmental impact locally (via JS logic)  
+- 🧠 Generates natural-language explanations with LLM reasoning  
+- 🔄 Responds instantly through a webhook endpoint  
+
+This demonstrates how **n8n can orchestrate APIs, custom analysis, and AI models** in a single automated workflow.
+
+---
+
+## 🗺️ Architecture
+
+User Input
+
+↓
+
+Webhook Trigger
+↓
+ImpactCO2 API (HTTP Request)
+↓
+Local Analysis Engine (JS)
+↓
+Formatter (JS)
+↓
+Anthropic Claude (LLM Chain)
+↓
+Webhook Response
+
+
+---
+
+## 🧩 Node-by-Node Breakdown
+
+### **1. Webhook (Trigger)**  
+Receives user input via POST, typically including:
+
+```json
+{
+  "distance_km": 12,
+  "transport_mode": "bus_gnv"
+}
+```
+
+### **2. HTTP Request — ImpactCO2 API**
+Sends a GET request to:
+
+https://impactco2.fr/api/transport/v1/<mode>
+
+Returns official emissions data:
+
+```json
+{
+  "value": 1.217,
+  "unit": "kgCO2e",
+  "label": "Bus (GNV)"
+}
+'''
+
+### **3. Local Analysis Engine (JS Node)**
+Performs domain-specific analysis such as:
+carbon intensity classification
+comparison to reference values
+eco-score and interpretation
+Example resulting object:
+'''json
+{
+  "carbonIntensity": 1.217,
+  "rating": "Moderate",
+  "comparison": "631% of average car emissions (worse)",
+  "recommendation": "Consider alternatives like tram or carpooling."
+}
+'''
+
+### **4. Format Final Output (JS Node)**
+Prepares stable, clean input for the LLM:
+'''json
+{
+  "mode": "Bus (GNV)",
+  "distance": 12,
+  "analysis": { ... }
+}
+'''
+
+5. Basic LLM Chain — Anthropic Claude
+Generates a human-readable explanation including:
+impact interpretation
+comparison with other transport options
+practical eco-friendly advice
+Example output:
+Your 12 km trip by Bus (GNV) emits 1.217 kg CO₂e, which is moderately high for this distance. Consider using electric public transport or carpooling when available.
+
+
+6. Respond to Webhook
+Returns the final AI-crafted message to the user:
+'''json
+{
+  "message": "Your 12 km trip by Bus (GNV) emits 1.217 kg CO₂e... [etc]"
+}
+'''
+
+
+## ✨ Features
+✔ Live CO₂ emissions data from ImpactCO2
+✔ Local rule-based carbon intensity analysis
+✔ AI-generated explanations (Claude)
+✔ Fully automated webhook endpoint
+✔ Easily integratable into chat apps, Framer prototypes, or mobile apps
 
 
 ## 🎯 Goals
