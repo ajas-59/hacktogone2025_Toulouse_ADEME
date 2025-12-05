@@ -185,7 +185,7 @@ Prepares stable, clean input for the LLM:
 }
 ```
 
-5. Basic LLM Chain — Anthropic Claude
+### **5. Basic LLM Chain — Anthropic Claude**
 Generates a human-readable explanation including:
 impact interpretation
 comparison with other transport options
@@ -195,7 +195,7 @@ practical eco-friendly advice
 *Your 12 km trip by Bus (GNV) emits 1.217 kg CO₂e, which is moderately high for this distance. Consider using electric public transport or carpooling when available.*
 
 
-6. Respond to Webhook
+### **6. Respond to Webhook**
 Returns the final AI-crafted message to the user:
 ```json
 {
