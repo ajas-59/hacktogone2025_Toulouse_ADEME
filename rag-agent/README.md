@@ -6,10 +6,10 @@
 ![Status](https://img.shields.io/badge/Prototype-Ready-green)
 ![Made with No-Code](https://img.shields.io/badge/Made%20with-No%20Code-brightgreen)
 
-## 🧠 Part 1 - AI agent question/answering with Supabase RAG (ADEME documentation)
+# 🧠 Project 1 - AI agent (Supabase + Google Cloud)
 
 This project is a **RAG-based intelligent assistant** (Retrieval-Augmented Generation) built with **no-code tools**.  
-It allows an AI agent to answer questions based on **your own documents**, such as PDFs or Google Docs.
+It allows an AI agent to answer questions based on **your own documents**, such as PDFs or Google Docs using Supabase linked to ADEME documentation.
 
 > ✅ You ask a question  
 > 📚 The agent searches through a vector database of your documents  
@@ -70,7 +70,7 @@ The assistant is deployable as a **public web chat** (via n8n) or embedded into 
 ---
 
 
-# 🚦 Part 2 — Transport Emissions AI Agent  
+# 🚦 Project 2 — Transport Emissions AI Agent  
 ### *ImpactCO2 + n8n + Anthropic Claude*
 
 ![n8n Workflow](https://img.shields.io/badge/Workflow-n8n-yellow)
@@ -83,10 +83,10 @@ This workflow powers a **real-time AI assistant that analyzes transport-related 
 
 It turns raw emission values into a clear, contextualized message for end users:
 
-- 🚗 Retrieves accurate carbon emissions for any transport mode  
-- 📊 Classifies the environmental impact locally (via JS logic)  
-- 🧠 Generates natural-language explanations with LLM reasoning  
-- 🔄 Responds instantly through a webhook endpoint  
+-  Retrieves accurate carbon emissions for any transport mode  
+-  Classifies the environmental impact locally (via JS logic)  
+-  Generates natural-language explanations with LLM reasoning  
+-  Responds instantly through a webhook endpoint  
 
 This demonstrates how **n8n can orchestrate APIs, custom analysis, and AI models** in a single automated workflow.
 
