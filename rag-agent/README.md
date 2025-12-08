@@ -70,17 +70,6 @@ The assistant is deployable as a **public web chat** (via n8n) or embedded into 
 ---
 
 
-## Use Case Examples
-
-- Internal knowledge assistant for a training center or company
-- Smart FAQ based on documentation
-- Sales playbook assistant
-- CV bot: turn your resume into a chatbot
-- Educational assistant for course content
-
----
-
-
 # 🚦 Part 2 — Transport Emissions AI Agent  
 ### *ImpactCO2 + n8n + Anthropic Claude*
 
