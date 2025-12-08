@@ -76,20 +76,6 @@ The assistant is deployable as a **public web chat** (via n8n) or embedded into 
 
 ---
 
-## ⚡ Quick Setup (for reproducibility)
-
-1. Clone this repo
-2. Create a project on [Supabase](https://supabase.com)
-3. Create the `documents` table with pgvector:
-   ```sql
-   create extension if not exists vector;
-   create table documents (
-     id bigserial primary key,
-     content text,
-     metadata jsonb,
-     embedding vector(1536)
-   );
-
 
 # 🚦 Part 2 — Transport Emissions AI Agent  
 ### *ImpactCO2 + n8n + Anthropic Claude*
@@ -191,7 +177,7 @@ impact interpretation
 comparison with other transport options
 practical eco-friendly advice
 
-**Example output:**
+***Example output:***
 *Your 12 km trip by Bus (GNV) emits 1.217 kg CO₂e, which is moderately high for this distance. Consider using electric public transport or carpooling when available.*
 
 
@@ -212,14 +198,3 @@ Returns the final AI-crafted message to the user:
 ✔ Fully automated webhook endpoint
 ✔ Easily integratable into chat apps, Framer prototypes, or mobile apps
 ```
-
-## 🎯 Goals
-This project serves as a live, tangible demonstration of :
-
-> Applied RAG principles in no-code
-
-> AI automation in real workflows
-
-> My ability to ship fast, useful AI tools
-
-> My interest in AI agentic architectures, LLM orchestration & document intelligence
