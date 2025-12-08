@@ -58,5 +58,5 @@ j’ai poursuivi l’exploration des workflows n8n en créant une démonstration
 → capable de répondre aux questions à partir de documents PDF ou Google Docs  
 → embarqué dans une interface Framer ou n8n public chat
 
-🔗 Voir dossier `rag-agent`
+🔗 Voir dossier [rag-agent](https://github.com/ajas-59/hacktogone2025_Toulouse_ADEME/tree/main/rag-agent)
 
