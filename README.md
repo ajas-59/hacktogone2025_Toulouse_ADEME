@@ -58,5 +58,5 @@ j’ai poursuivi l’exploration des workflows n8n en créant une démonstration
 → capable de répondre aux questions à partir de documents PDF ou Google Docs  
 → embarqué dans une interface Framer ou n8n public chat
 
-🔗 Voir la branche `rag-agent-supabase`
+🔗 Voir dossier `rag-agent`
 
