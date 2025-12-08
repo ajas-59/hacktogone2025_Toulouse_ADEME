@@ -70,7 +70,7 @@ The assistant is deployable as a **public web chat** (via n8n) or embedded into 
 ---
 
 
-## 📌 Use Case Examples
+## Use Case Examples
 
 - Internal knowledge assistant for a training center or company
 - Smart FAQ based on documentation
