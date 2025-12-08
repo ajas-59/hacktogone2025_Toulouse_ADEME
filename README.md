@@ -17,9 +17,6 @@ Prise en main d'outils de partage de code et de documents :
 > À explorer prochainement : Partage de notebooks SQL + Python
 
 
-
-<ins>Applis</ins>
-
 | Nom du projet                    | Description                                                                                  | Statut         |
 |----------------------------------|----------------------------------------------------------------------------------------------|----------------|
 | `proto-formulaire`               | Calculs carbones fictifs, fonctionnel                                                        | ✅ Fonctionnel |
