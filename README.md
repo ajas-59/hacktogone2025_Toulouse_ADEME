@@ -4,7 +4,7 @@ notre contribution à [Hacktogone Toulouse 2025](https://github.com/thehacktogon
 > Projet calcul score carbone des entreprises par agents IA et système de recommendation de l'équipe [placeholder](https://github.com/fatoumo/hacktogone2025) constitué de : [Sacha Simonian](https://www.linkedin.com/in/sacha-simonian-a46580153?utm_source=share_via&utm_content=profile&utm_medium=member_android
 ) et [Fabien Moritz](https://www.linkedin.com/in/fabienmoritz?utm_source=share_via&utm_content=profile&utm_medium=member_android) et moi.
 
-## Outils :
+## 🪛**Outils :**
 
 Prise en main d'outils de partage de code et de documents :
 
@@ -35,8 +35,9 @@ Partenaire de l'Hacktogone permettant la création Agents IA (vocaux et intégra
 ### 4) [ClickUp](https://clickup.com)
 Pour assignation des taches en équipe
 
+## ⚙️ Applications
 
-## Fonctionnalité recommendation par articles
+### 1) Fonctionnalité recommendation par articles
 Par scrapping du site [ADEME](https://librairie.ademe.fr/changement-climatique/8764-the-french-climate-challenge-9791029726316.html)
 
 > utilisation sitmap
@@ -46,7 +47,7 @@ Par scrapping du site [ADEME](https://librairie.ademe.fr/changement-climatique/8
 > intéraction utilisateurs
 
 
-## 🔀 Extension du projet : RAG Agent sur documents (n8n + Supabase)
+###  2) Extension du projet : RAG Agent sur documents (n8n + Supabase)
 
 Suite au Hackathon IA Agentique de Toulouse (Hacktogone 2025),  
 j’ai poursuivi l’exploration des workflows n8n en créant une démonstration d’agent IA :
