@@ -57,11 +57,15 @@ The assistant is deployable as a **public web chat** (via n8n) or embedded into 
 
 ## ✨ Features
 
-- ✅ No-code document ingestion pipeline
-- ✅ AI agent aware of custom knowledge base
-- ✅ Supabase vector search with `pgvector`
-- ✅ Real-time chat deployment (public or embedded)
-- ✅ Google Drive integration for dynamic ingestion
+>   No-code document ingestion pipeline
+
+>   AI agent aware of custom knowledge base
+
+>  Supabase vector search with `pgvector`
+
+>   Real-time chat deployment (public or embedded)
+
+>   Google Drive integration for dynamic ingestion
 
 ---
 
@@ -191,10 +195,13 @@ Returns the final AI-crafted message to the user:
 
 
 ## ✨ Features
-```
-✔ Live CO₂ emissions data from ImpactCO2
-✔ Local rule-based carbon intensity analysis
-✔ AI-generated explanations (Claude)
-✔ Fully automated webhook endpoint
-✔ Easily integratable into chat apps, Framer prototypes, or mobile apps
-```
+
+> Live CO₂ emissions data from ImpactCO2
+
+> Local rule-based carbon intensity analysis
+
+> AI-generated explanations (Claude)
+
+> Fully automated webhook endpoint
+
+> Easily integratable into chat apps, Framer prototypes, or mobile apps
